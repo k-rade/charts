@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import * as Chart from 'chart.js';
 
 @Component({
   selector: 'app-chart',
@@ -7,55 +6,59 @@ import * as Chart from 'chart.js';
   styleUrls: ['./chart.component.scss']
 })
 export class ChartComponent implements OnInit {
-
-  myDataSets = [{
-    name: 'likes',
-    points: [
-      { x: 10, y: 100 },
-      { x: 20, y: 500 }
-    ]
-  }];
+  hour = 0;
+  min = 0;
+  sec = 2;
 
   today = new Date();
+  minDate = new Date(this.today.getFullYear(), this.today.getMonth() + 1, this.today.getDate(), 0, 0, 0);
+  maxDate = new Date(this.today.getFullYear(), this.today.getMonth() + 1, this.today.getDate(), 0, 1,)
+
   type = 'LineChart';
   chartData: Array<Array<any>> = [
-    [new Date(2020, 10, 13, 6, 25), 2],
-    [new Date(2020, 10, 13, 6, 45), 15],
-    [new Date(2020, 10, 13, 7, 0), 0],
-    [new Date(2020, 10, 13, 7, 45), 0],
-    [new Date(2020, 10, 13, 8, 25), 20],
-    [new Date(2020, 10, 13, 9, 30), 15],
-    [new Date(2020, 10, 13, 10, 45), 0],
-    [new Date(2020, 10, 13, 12, 45), 0],
-    [new Date(2020, 10, 13, 12, 56), 19],
-    [new Date(2020, 10, 13, 13, 10), 10],
-    [new Date(2020, 10, 13, 14, 25), 2],
-    [new Date(2020, 10, 13, 15, 0), 55],
-    [new Date(2020, 10, 13, 16, 30), 25],
-    [new Date(2020, 10, 13, 18, 25), 33],
-    [new Date(2020, 10, 13, 22, 30), 5],
+    [new Date(this.today.getFullYear(), this.today.getMonth() + 1, this.today.getDate(), 0, 0, 1), 2],
   ];
 
-  options: object = {
+  options = {
+    backgroundColor: 'transparent',
     legend: 'none',
     tooltip: { isHtml: true },
     vAxis: {
       textPosition: 'none'
     },
     hAxis: {
-      minValue: new Date(this.today.getFullYear(), this.today.getMonth() + 1, this.today.getDate(), 0),
-      maxValue: new Date(this.today.getFullYear(), this.today.getMonth() + 1, this.today.getDate(), 24)
+      viewWindow: {
+        min: this.minDate,
+        max: this.maxDate
+      }
     },
     width: 1000
   };
 
-  constructor() { }
-
   ngOnInit(): void {
+    setInterval(() => { this.addData() }, 200);
   }
 
-  formatXAxisValue(value: number) {
-    return `Value ${value}`;
+  addData() {
+    console.log(this.sec);
+    if (this.min == this.maxDate.getMinutes()) {
+      this.minDate.setMinutes(this.min);
+      this.maxDate.setMinutes(this.min + 1)
+    }
+    const data: Array<Array<any>> = [
+      [new Date(2020, 10, this.today.getDate(), this.hour, this.min, this.sec), Math.floor(Math.random() * (50 - 20) + 20)]
+    ];
+    this.chartData = [...this.chartData, ...data];
+    this.sec++;
+    if (this.sec == 60) {
+      this.sec = 0;
+      this.min++;
+    }
+
+    if (this.min == 60) {
+      this.hour++;
+    }
   }
+
 
 }
